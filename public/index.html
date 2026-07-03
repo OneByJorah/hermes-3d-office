@@ -1639,18 +1639,25 @@ function updateBehavior() {
 }
 
 function spawnRandomChat() {
-  // Find agents close together
+  // Find agents close together; throttle so bubbles don't stack
   const chatMessages = ['Nice work!', 'LGTM', 'Can you review?', 'On it', 'Coffee?', 'Standup?', 'Synced'];
+  const now = Date.now();
   
   for (let i = 0; i < agents.length; i++) {
+    const a1 = agents[i];
+    if (a1.lastBubble && now - a1.lastBubble < 4000) continue;
+    
     for (let j = i + 1; j < agents.length; j++) {
-      const a1 = agents[i].group.position;
-      const a2 = agents[j].group.position;
-      const dist = a1.distanceTo(a2);
+      const a2 = agents[j];
+      if (a2.lastBubble && now - a2.lastBubble < 4000) continue;
       
-      if (dist < 3 && Math.random() > 0.6) {
+      const dist = a1.group.position.distanceTo(a2.group.position);
+      
+      if (dist < 3.2 && Math.random() > 0.75) {
         const msg = chatMessages[Math.floor(Math.random() * chatMessages.length)];
-        showChatBubble(agents[i], msg);
+        showChatBubble(a1, msg);
+        a1.lastBubble = now;
+        a2.lastBubble = now;
         break;
       }
     }
@@ -1658,6 +1665,13 @@ function spawnRandomChat() {
 }
 
 function showChatBubble(agentObj, text) {
+  // Remove existing bubble for this agent to avoid overlap
+  if (agentObj.activeBubble) {
+    scene.remove(agentObj.activeBubble.sprite);
+    const idx = bubbles.indexOf(agentObj.activeBubble);
+    if (idx > -1) bubbles.splice(idx, 1);
+  }
+  
   const canvas = document.createElement('canvas');
   canvas.width = 300;
   canvas.height = 80;
@@ -1678,22 +1692,28 @@ function showChatBubble(agentObj, text) {
   
   const tex = new THREE.CanvasTexture(canvas);
   const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true }));
-  sprite.scale.set(2, 0.55, 1);
-  sprite.position.set(agentObj.group.position.x, agentObj.group.position.y + 2.8, agentObj.group.position.z);
+  sprite.scale.set(1.8, 0.5, 1);
+  sprite.position.set(agentObj.group.position.x, agentObj.group.position.y + 2.6, agentObj.group.position.z);
   scene.add(sprite);
   
-  bubbles.push({ sprite, time: 0, life: 2.5 });
+  const bubble = { sprite, time: 0, life: 2.2 };
+  bubbles.push(bubble);
+  agentObj.activeBubble = bubble;
 }
 
 function updateBubbles(delta) {
   for (let i = bubbles.length - 1; i >= 0; i--) {
     const b = bubbles[i];
     b.time += delta;
-    b.sprite.position.y += delta * 0.5;
-    b.sprite.material.opacity = 1 - (b.time / b.life);
+    b.sprite.position.y += delta * 0.4;
+    b.sprite.material.opacity = Math.max(0, 1 - (b.time / b.life));
     
     if (b.time > b.life) {
       scene.remove(b.sprite);
+      // Clear activeBubble reference if this was it
+      agents.forEach(a => {
+        if (a.activeBubble === b) a.activeBubble = null;
+      });
       bubbles.splice(i, 1);
     }
   }
@@ -1818,7 +1838,8 @@ function animate() {
   // Update meeting notification periodically
   if (Date.now() - lastMeetingUpdate > 5000) {
     const meetingCount = AGENTS.filter(a => agentStates[a.id].status === 'meeting').length;
-    document.getElementById('meetingSub').textContent = `${Math.max(meetingCount, 2)}/5 attending — Daily standup`;
+    document.getElementById('meetingSub').textContent = `${Math.max(meetingCount, 1)}/5 attending — Daily standup`;
+    updateStatusBar();
     lastMeetingUpdate = Date.now();
   }
   
