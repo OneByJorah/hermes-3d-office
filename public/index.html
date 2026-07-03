@@ -569,7 +569,9 @@ body {
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
-const AGENTS = [
+const AGENTS = (window.__HERMES_AGENTS__ && window.__HERMES_AGENTS__.length)
+  ? window.__HERMES_AGENTS__
+  : [
   { id: 'orchestrator', name: 'Orchestrator', color: '#8B5CF6', role: 'Supervisor', emoji: '🧠', home: 'meeting', tasks: ['Reviewing pipeline', 'Coordinating agents', 'Approving handoffs'], output: ['Daily brief issued', 'Pipeline updated'] },
   { id: 'analyst', name: 'Analyst', color: '#3B82F6', role: 'Research', emoji: '📊', home: 'left', tasks: ['Market research', 'Data synthesis', 'Trend analysis'], output: ['Competitor report', 'Keyword research'] },
   { id: 'writer', name: 'Writer', color: '#EC4899', role: 'Content', emoji: '✍️', home: 'center', tasks: ['Drafting article', 'Editing copy', 'SEO optimization'], output: ['Blog post v2', 'Thread draft'] },
@@ -588,9 +590,21 @@ const STATUS_LABELS = {
 const agentStates = {};
 const agentStats = {};
 const recentChats = [];
+
+function resetAgentStates(agentList) {
+  agentList.forEach(a => {
+    if (!agentStates[a.id]) {
+      agentStates[a.id] = { status: a.status || 'idle', task: a.task || 'Idle', targetX: 0, targetZ: 0, currentX: 0, currentZ: 0 };
+    }
+    agentStates[a.id].status = a.status || agentStates[a.id].status;
+    agentStates[a.id].task = a.task || agentStates[a.id].task;
+    if (a.stats) agentStats[a.id] = a.stats;
+  });
+}
+
 AGENTS.forEach(a => {
-  agentStates[a.id] = { status: 'idle', task: 'Idle', targetX: 0, targetZ: 0, currentX: 0, currentZ: 0 };
-  agentStats[a.id] = { tasksDone: Math.floor(Math.random() * 30) + 8, active: Math.floor(Math.random() * 5) + 1, hours: (Math.random() * 6 + 1).toFixed(1) };
+  agentStates[a.id] = { status: a.status || 'idle', task: a.task || 'Idle', targetX: 0, targetZ: 0, currentX: 0, currentZ: 0 };
+  agentStats[a.id] = a.stats || { tasksDone: Math.floor(Math.random() * 30) + 8, active: Math.floor(Math.random() * 5) + 1, hours: (Math.random() * 6 + 1).toFixed(1) };
 });
 
 const ROOM_WIDTH = 38;
@@ -603,6 +617,65 @@ let zoom = 1, autoRotate = false, labelsVisible = true;
 let currentRotation = -Math.PI / 4, targetRotation = -Math.PI / 4;
 let clock, selectedAgent = null;
 let lastMeetingUpdate = 0;
+let liveConfig = { mode: 'demo', enable_sse: true };
+
+function applyLiveAgents(newAgents) {
+  // Update existing / add new agents
+  newAgents.forEach(na => {
+    const existing = AGENTS.find(a => a.id === na.id);
+    if (existing) {
+      Object.assign(existing, na);
+    } else {
+      AGENTS.push(na);
+    }
+    const state = agentStates[na.id];
+    if (state) {
+      state.status = na.status || state.status;
+      state.task = na.task || state.task;
+    } else {
+      agentStates[na.id] = { status: na.status || 'idle', task: na.task || 'Idle', targetX: 0, targetZ: 0, currentX: 0, currentZ: 0 };
+    }
+    if (na.stats) agentStats[na.id] = na.stats;
+  });
+  createAgents();
+  setupUI();
+  updateStatusBar();
+  if (selectedAgent) selectAgent(selectedAgent.id);
+  showToast('Live agents synced');
+}
+
+async function fetchAgents() {
+  try {
+    const res = await fetch('/api/agents', { cache: 'no-store' });
+    if (!res.ok) return;
+    const data = await res.json();
+    if (Array.isArray(data) && data.length) applyLiveAgents(data);
+  } catch (e) { console.log('Agent fetch failed:', e); }
+}
+
+async function fetchConfig() {
+  try {
+    const res = await fetch('/api/config', { cache: 'no-store' });
+    if (res.ok) liveConfig = await res.json();
+  } catch (e) {}
+}
+
+function startLiveUpdates() {
+  fetchConfig();
+  fetchAgents();
+  setInterval(fetchAgents, 5000);
+
+  if (liveConfig.enable_sse) {
+    const es = new EventSource('/events');
+    es.onmessage = ev => {
+      try {
+        const data = JSON.parse(ev.data);
+        if (data.agents) applyLiveAgents(data.agents);
+      } catch (e) {}
+    };
+    es.onerror = () => { /* falls back to polling */ };
+  }
+}
 
 function hideLoading() {
   const loading = document.getElementById('loading');
@@ -677,6 +750,7 @@ function init() {
     showToast('Office loaded with fallback mode');
   } finally {
     setTimeout(hideLoading, 600);
+    startLiveUpdates();
   }
 }
 
@@ -1273,6 +1347,13 @@ function createDecor() {
 }
 
 function createAgents() {
+  // Clear old agents if re-initializing from live data
+  agents.forEach(a => scene.remove(a.group));
+  labels.forEach(l => scene.remove(l));
+  clickableObjects = clickableObjects.filter(o => !o.userData.agentId);
+  agents = [];
+  labels = [];
+
   AGENTS.forEach((agent, i) => {
     const group = new THREE.Group();
     const startPos = getHomePosition(agent.home);
@@ -1459,8 +1540,8 @@ function selectAgent(agentId) {
   selectedAgent = agent;
   
   const panel = document.getElementById('detail-panel');
-  const state = agentStates[agentId];
-  const stats = agentStats[agentId];
+  const state = agentStates[agentId] || { status: agent.status || 'idle', task: agent.task || 'Idle' };
+  const stats = agentStats[agentId] || { tasksDone: 0, active: 0, hours: 0 };
   
   document.getElementById('detailAvatar').textContent = agent.emoji;
   document.getElementById('detailAvatar').style.background = agent.color + '22';
@@ -1469,14 +1550,14 @@ function selectAgent(agentId) {
   document.getElementById('detailStatusDot').style.background = agent.color;
   document.getElementById('detailStatusDot').style.boxShadow = `0 0 12px ${agent.color}`;
   document.getElementById('detailStatusText').textContent = state.task || state.status;
-  document.getElementById('statTasks').textContent = stats.tasksDone;
-  document.getElementById('statActive').textContent = stats.active;
-  document.getElementById('statHours').textContent = stats.hours + 'h';
+  document.getElementById('statTasks').textContent = stats.tasksDone || 0;
+  document.getElementById('statActive').textContent = stats.active || 0;
+  document.getElementById('statHours').textContent = (stats.hours || 0) + 'h';
   
-  document.getElementById('detailTasks').innerHTML = agent.tasks.map(t => `
+  document.getElementById('detailTasks').innerHTML = (agent.tasks || []).map(t => `
     <div class="detail-task" style="color:${agent.color}">${t}</div>
   `).join('');
-  document.getElementById('detailOutput').innerHTML = agent.output.map(o => `
+  document.getElementById('detailOutput').innerHTML = (agent.output || []).map(o => `
     <div class="detail-task">${o}</div>
   `).join('');
   
