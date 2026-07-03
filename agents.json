@@ -6,26 +6,26 @@
     "emoji": "\ud83e\udde0",
     "color": "#8B5CF6",
     "home": "meeting",
-    "status": "meeting",
-    "task": "Reviewing scheduled reports",
+    "status": "working",
+    "task": "Unknown task",
     "tasks": [
-      "Reviewing reports",
-      "Checking pipeline",
-      "Approving handoffs"
+      "Unknown task",
+      "Processing input",
+      "Generating response"
     ],
     "output": [
       "saved activity logging rule to memory",
       "1 content files written",
       "5 tasks logged",
-      "20 sessions"
+      "22 sessions"
     ],
     "stats": {
-      "tasksDone": 12,
-      "active": 0,
-      "hours": 0.3
+      "tasksDone": 13,
+      "active": 1,
+      "hours": 0.1
     },
-    "mood": 0.7,
-    "typing": false,
+    "mood": 0.95,
+    "typing": true,
     "position": null
   },
   {
@@ -61,25 +61,23 @@
     "emoji": "\u270d\ufe0f",
     "color": "#10B981",
     "home": "desk2",
-    "status": "working",
-    "task": "Content tab backend API development",
+    "status": "idle",
+    "task": "Waiting for tasks",
     "tasks": [
-      "Content tab backend API development",
-      "Processing input",
-      "Generating response"
+      "Standing by",
+      "Ready for assignment"
     ],
     "output": [
       "drafted SEO blog post for solopreneurs",
-      "1 tasks logged",
-      "1 sessions"
+      "1 tasks logged"
     ],
     "stats": {
       "tasksDone": 1,
-      "active": 1,
-      "hours": 6.7
+      "active": 0,
+      "hours": 0
     },
-    "mood": 0.95,
-    "typing": true,
+    "mood": 0.5,
+    "typing": false,
     "position": null
   },
   {
