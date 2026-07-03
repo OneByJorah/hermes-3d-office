@@ -1,0 +1,138 @@
+[
+  {
+    "id": "orchestrator",
+    "name": "Orchestrator",
+    "role": "Supervisor",
+    "emoji": "\ud83e\udde0",
+    "color": "#8B5CF6",
+    "home": "meeting",
+    "status": "meeting",
+    "task": "Reviewing scheduled reports",
+    "tasks": [
+      "Reviewing reports",
+      "Checking pipeline",
+      "Approving handoffs"
+    ],
+    "output": [
+      "saved activity logging rule to memory",
+      "1 content files written",
+      "5 tasks logged",
+      "20 sessions"
+    ],
+    "stats": {
+      "tasksDone": 12,
+      "active": 0,
+      "hours": 0.3
+    },
+    "mood": 0.7,
+    "typing": false,
+    "position": null
+  },
+  {
+    "id": "analyst",
+    "name": "Analyst",
+    "role": "Research",
+    "emoji": "\ud83d\udd0d",
+    "color": "#3B82F6",
+    "home": "desk1",
+    "status": "idle",
+    "task": "Waiting for tasks",
+    "tasks": [
+      "Standing by",
+      "Ready for assignment"
+    ],
+    "output": [
+      "compiled research brief on automation ideas",
+      "1 tasks logged"
+    ],
+    "stats": {
+      "tasksDone": 1,
+      "active": 0,
+      "hours": 0
+    },
+    "mood": 0.5,
+    "typing": false,
+    "position": null
+  },
+  {
+    "id": "writer",
+    "name": "Writer",
+    "role": "Content",
+    "emoji": "\u270d\ufe0f",
+    "color": "#10B981",
+    "home": "desk2",
+    "status": "working",
+    "task": "Content tab backend API development",
+    "tasks": [
+      "Content tab backend API development",
+      "Processing input",
+      "Generating response"
+    ],
+    "output": [
+      "drafted SEO blog post for solopreneurs",
+      "1 tasks logged",
+      "1 sessions"
+    ],
+    "stats": {
+      "tasksDone": 1,
+      "active": 1,
+      "hours": 6.7
+    },
+    "mood": 0.95,
+    "typing": true,
+    "position": null
+  },
+  {
+    "id": "marketer",
+    "name": "Marketer",
+    "role": "Growth",
+    "emoji": "\ud83d\udcc8",
+    "color": "#F59E0B",
+    "home": "desk3",
+    "status": "idle",
+    "task": "Waiting for tasks",
+    "tasks": [
+      "Standing by",
+      "Ready for assignment"
+    ],
+    "output": [
+      "produced social posts and 30/60/90 day plan",
+      "1 tasks logged"
+    ],
+    "stats": {
+      "tasksDone": 1,
+      "active": 0,
+      "hours": 0
+    },
+    "mood": 0.5,
+    "typing": false,
+    "position": null
+  },
+  {
+    "id": "coder",
+    "name": "Coder",
+    "role": "Engineering",
+    "emoji": "\ud83d\udcbb",
+    "color": "#EF4444",
+    "home": "desk4",
+    "status": "idle",
+    "task": "Waiting for tasks",
+    "tasks": [
+      "Standing by",
+      "Ready for assignment"
+    ],
+    "output": [
+      "built agent logging system",
+      "1 content files written",
+      "2 tasks logged"
+    ],
+    "stats": {
+      "tasksDone": 3,
+      "active": 0,
+      "hours": 0
+    },
+    "mood": 0.5,
+    "typing": false,
+    "position": null
+  }
+]
