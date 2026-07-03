@@ -1,0 +1,14 @@
+[Unit]
+Description=Hermes 3D Office Dashboard
+After=network.target
+
+[Service]
+Type=simple
+User=j1admin
+WorkingDirectory=/home/<user>/hermes-3d-office
+ExecStart=/usr/bin/python3 /home/<user>/hermes-3d-office/server.py
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=default.target
