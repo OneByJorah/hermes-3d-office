@@ -26,7 +26,31 @@ Visit `http://localhost:9502`.
 
 ## Hermes Agent Integration
 
-Three auto-wiring options (set in `.env`):
+### ⭐ Recommended: Bridge Script (auto plug-and-play)
+
+The included bridge script auto-discovers your Hermes agents — no configuration needed.
+
+```bash
+# One-shot: write agents.json once
+python3 scripts/hermes_bridge.py
+
+# Continuous: refresh every 10 seconds
+python3 scripts/hermes_bridge.py --watch --interval 10
+
+# Or push via webhook
+python3 scripts/hermes_bridge.py --webhook http://localhost:9502/webhook/agents
+```
+
+The bridge reads from:
+- **Hermes Gateway API** (`http://localhost:51763/api/snapshot`) — agent activity, status, sessions
+- **Session DB** (`~/.hermes/state.db`) — recent/active sessions per platform
+- **Cron jobs** (`~/.hermes/cron/jobs.json`) — scheduled task status
+- **Content directories** (`~/.hermes/content/`) — files written per agent
+- **Kanban DB** (`~/.hermes/kanban.db`) — open tasks
+
+It auto-maps agents from your `config.yaml` Discord `channel_prompts` and Telegram sessions.
+
+### Other wiring options (set in `.env`):
 
 ### 1. Poll a Hermes status API
 
