@@ -1785,8 +1785,17 @@ function animateAgents(delta) {
       
       a.group.position.y = Math.abs(Math.sin(a.walkCycle * 2)) * 0.06;
       
-      state.status = 'walking';
+      // Only override status to walking if we're actually en route and weren't forced to another state
+      if (state.status !== 'meeting' && state.status !== 'working' && state.status !== 'idle') {
+        state.status = 'walking';
+      }
     } else {
+      // Arrived: lock in the intended status from updateBehavior, or default to idle
+      if (state.status === 'walking') {
+        state.status = 'idle';
+        state.task = state.task || 'Idle';
+      }
+      
       // Idle / working
       a.group.position.y *= 0.9;
       a.leftLeg.rotation.x *= 0.9;
