@@ -74,10 +74,20 @@ docker compose up --build
 
 ### systemd auto-start
 
+The systemd unit uses `%I` so it works for any username. Replace `youruser`:
+
 ```bash
-sudo cp hermes-office.service /etc/systemd/system/
+sudo cp hermes-office.service /etc/systemd/system/hermes-office@youruser.service
 sudo systemctl daemon-reload
-sudo systemctl enable --now hermes-office
+sudo systemctl enable --now hermes-office@youruser
+```
+
+Example for user `j1admin`:
+
+```bash
+sudo cp hermes-office.service /etc/systemd/system/hermes-office@j1admin.service
+sudo systemctl daemon-reload
+sudo systemctl enable --now hermes-office@j1admin
 ```
 
 ## Mesh-VPN / Remote Access

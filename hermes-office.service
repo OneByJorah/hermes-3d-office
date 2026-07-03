@@ -4,11 +4,14 @@ After=network.target
 
 [Service]
 Type=simple
-User=j1admin
-WorkingDirectory=/home/<user>/hermes-3d-office
-ExecStart=/usr/bin/python3 /home/<user>/hermes-3d-office/server.py
+User=%I
+WorkingDirectory=/home/%I/hermes-3d-office
+ExecStart=/usr/bin/python3 /home/%I/hermes-3d-office/server.py
 Restart=always
 RestartSec=5
+Environment="PATH=/usr/local/bin:/usr/bin:/bin"
+StandardOutput=journal
+StandardError=journal
 
 [Install]
 WantedBy=default.target
