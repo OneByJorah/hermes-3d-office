@@ -234,12 +234,15 @@ class Handler(http.server.SimpleHTTPRequestHandler):
 
     def _send_json(self, data, status=HTTPStatus.OK):
         body = json.dumps(data).encode("utf-8")
-        self.send_response(status)
-        self.send_header("Content-Type", "application/json")
-        self.send_header("Content-Length", str(len(body)))
-        self.send_header("Access-Control-Allow-Origin", "*")
-        self.end_headers()
-        self.wfile.write(body)
+        try:
+            self.send_response(status)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Content-Length", str(len(body)))
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.end_headers()
+            self.wfile.write(body)
+        except (BrokenPipeError, ConnectionResetError):
+            pass
 
     def _read_json_body(self):
         length = int(self.headers.get("Content-Length", "0"))
@@ -274,7 +277,10 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             self.path = "/index.html"
             return super().do_GET()
 
-        return super().do_GET()
+        try:
+            return super().do_GET()
+        except (BrokenPipeError, ConnectionResetError):
+            return
 
     def do_POST(self):
         parsed = urlparse(self.path)
