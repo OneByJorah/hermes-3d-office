@@ -1,0 +1,79 @@
+{
+  "agents": [
+    {
+      "id": "orchestrator",
+      "name": "Orchestrator",
+      "role": "Supervisor",
+      "emoji": "🧠",
+      "color": "#8B5CF6",
+      "home": "meeting",
+      "status": "meeting",
+      "task": "Coordinating standup",
+      "tasks": ["Reviewing pipeline", "Coordinating agents", "Approving handoffs"],
+      "output": ["Daily brief issued", "Pipeline updated"],
+      "stats": {"tasksDone": 34, "active": 5, "hours": 6.2},
+      "mood": 0.9,
+      "typing": false
+    },
+    {
+      "id": "analyst",
+      "name": "Analyst",
+      "role": "Research",
+      "emoji": "📊",
+      "color": "#3B82F6",
+      "home": "left",
+      "status": "working",
+      "task": "Market research",
+      "tasks": ["Market research", "Data synthesis", "Trend analysis"],
+      "output": ["Competitor report v1", "Keyword research"],
+      "stats": {"tasksDone": 18, "active": 3, "hours": 4.5},
+      "mood": 0.75,
+      "typing": true
+    },
+    {
+      "id": "writer",
+      "name": "Writer",
+      "role": "Content",
+      "emoji": "✍️",
+      "color": "#EC4899",
+      "home": "center",
+      "status": "working",
+      "task": "Drafting launch blog",
+      "tasks": ["Drafting article", "Editing copy", "SEO optimization"],
+      "output": ["Blog post v2", "Thread draft"],
+      "stats": {"tasksDone": 21, "active": 2, "hours": 5.1},
+      "mood": 0.8,
+      "typing": true
+    },
+    {
+      "id": "marketer",
+      "name": "Marketer",
+      "role": "Growth",
+      "emoji": "📢",
+      "color": "#F59E0B",
+      "home": "right",
+      "status": "walking",
+      "task": "Walking to meeting",
+      "tasks": ["Campaign planning", "Audience targeting", "Post scheduling"],
+      "output": ["Launch plan", "Campaign brief"],
+      "stats": {"tasksDone": 15, "active": 2, "hours": 3.8},
+      "mood": 0.85,
+      "typing": false
+    },
+    {
+      "id": "coder",
+      "name": "Coder",
+      "role": "Dev",
+      "emoji": "💻",
+      "color": "#10B981",
+      "home": "right2",
+      "status": "working",
+      "task": "Building API endpoint",
+      "tasks": ["Feature build", "Code review", "Deploy checks"],
+      "output": ["API endpoint merged", "Bug fix deployed"],
+      "stats": {"tasksDone": 29, "active": 4, "hours": 6.7},
+      "mood": 0.7,
+      "typing": true
+    }
+  ]
+}

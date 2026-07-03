@@ -2,20 +2,23 @@
 
 Animated 3D virtual office floor plan for Hermes AgentOS subagents. Each subagent appears as a living worker inside an isometric office with desks, meeting room, lounge, kitchen, server room, and real-time status.
 
-## Live Demo
+## Features
 
-Open in browser (Tailscale):
-
-```
-http://100.66.142.21:9502/office.html
-```
+- **5 animated subagents**: Orchestrator, Analyst, Writer, Marketer, Coder
+- **Live state**: status, current task, task list, recent output, stats
+- **Animated behaviors**: walking, working, meeting, idle, coffee runs
+- **Click-to-inspect**: click any avatar or top-bar portrait for details
+- **Chat bubbles**: agents talk when nearby
+- **Office details**: server room (blinking LEDs), meeting area, kitchen, phone booths, lounge, ping pong, bookshelf, water cooler, plants, wall clock, posters
+- **Controls**: zoom, auto-rotate, name-label toggle
+- **Plug-and-play Hermes integration**: poll a Hermes API, drop an `agents.json`, or receive webhook pushes
 
 ## Quick Start
 
 ```bash
 git clone https://github.com/OneByJorah/hermes-3d-office.git
 cd hermes-3d-office
-python3 -m pip install -r requirements.txt  # no deps for static server
+./install.sh
 python3 server.py
 ```
 
@@ -23,15 +26,53 @@ Visit `http://localhost:9502`.
 
 ## Hermes Agent Integration
 
-The dashboard reads agent state from a JSON endpoint that Hermes can expose. Edit `HERMES_AGENT_API` in `server.py` to point to your Hermes agent status endpoint.
+Three auto-wiring options (set in `.env`):
 
-Example:
+### 1. Poll a Hermes status API
 
-```python
-HERMES_AGENT_API = "http://localhost:8080/api/agents/status"
+```bash
+HERMES_AGENT_API=http://localhost:8080/api/agents/status
 ```
 
-Deploy as a systemd service:
+The server polls it every `POLL_INTERVAL_SECONDS` and serves `/api/agents` to the dashboard.
+
+### 2. Static JSON file drop
+
+```bash
+AGENTS_JSON_PATH=./agents.json
+```
+
+Any Hermes cron job or script writes `agents.json`; the dashboard reflects it immediately.
+
+### 3. Webhook push
+
+Configure Hermes to POST to:
+
+```
+POST http://your-host:9502/webhook/agents
+```
+
+with a JSON body containing an `agents` array. The dashboard updates live via SSE.
+
+See `docs/HERMES_INTEGRATION.md` for the full agent JSON contract.
+
+## Deployment
+
+### Python (recommended)
+
+```bash
+cp .env.example .env
+# edit .env
+python3 server.py
+```
+
+### Docker
+
+```bash
+docker compose up --build
+```
+
+### systemd auto-start
 
 ```bash
 sudo cp hermes-office.service /etc/systemd/system/
@@ -39,19 +80,47 @@ sudo systemctl daemon-reload
 sudo systemctl enable --now hermes-office
 ```
 
-## Features
+## Tailscale / Remote Access
 
-- 5 animated subagents: Orchestrator, Analyst, Writer, Marketer, Coder
-- Walking, working, meeting, and idle animations
-- Click any avatar to see live status, tasks, and recent output
-- Chat bubbles when agents meet
-- Pulsing mood rings and typing particles
-- Server room, meeting area, kitchen, phone booths, lounge, ping pong
+If you run the server on a Tailscale node:
+
+```
+http://100.66.142.21:9502
+```
+
+For a cleaner URL, run on that node:
+
+```bash
+sudo tailscale set --operator=$USER
+sudo tailscale serve https://localhost:9502
+```
+
+## Endpoints
+
+| Endpoint | Description |
+|----------|-------------|
+| `/` | Dashboard |
+| `/api/agents` | Live agent array |
+| `/api/config` | Safe config summary |
+| `/webhook/agents` | Receive Hermes webhooks |
+| `/events` | Server-Sent Events stream |
+
+## Environment Variables
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `PORT` | `9502` | Server port |
+| `HOST` | `0.0.0.0` | Bind address |
+| `HERMES_AGENT_API` | `""` | Hermes status API URL |
+| `AGENTS_JSON_PATH` | `./agents.json` | Static agents JSON |
+| `POLL_INTERVAL_SECONDS` | `5` | Poll interval |
+| `ENABLE_SSE` | `true` | Live browser SSE |
 
 ## Tech
 
 - Three.js r128
-- Pure static HTML/CSS/JS + Python HTTP server
+- Pure static HTML/CSS/JS
+- Python 3 HTTP server (no framework dependencies)
 
 ## License
 

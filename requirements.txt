@@ -1,0 +1,2 @@
+# Minimal deps placeholder; server uses only stdlib.
+# Add here if future features need packages.

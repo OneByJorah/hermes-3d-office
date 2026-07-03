@@ -1,0 +1,10 @@
+services:
+  office:
+    build: .
+    ports:
+      - "${PORT:-9502}:${PORT:-9502}"
+    env_file:
+      - .env
+    volumes:
+      - ./agents.json:/app/agents.json:ro
+    restart: unless-stopped
