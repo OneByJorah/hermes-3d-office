@@ -19,6 +19,14 @@ body {
   top: 0;
   left: 0;
 }
+#canvas-container::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.35) 100%);
+  z-index: 5;
+}
 
 /* UI Overlay */
 #ui {
@@ -766,10 +774,16 @@ function updateCamera() {
 }
 
 function setupLighting() {
-  const ambient = new THREE.AmbientLight(0xffffff, 0.5);
+  // Soft ambient with slight warm tint
+  const ambient = new THREE.AmbientLight(0xb0b8c8, 0.45);
   scene.add(ambient);
   
-  const sun = new THREE.DirectionalLight(0xfff8e7, 0.7);
+  // Hemisphere light: sky warm, ground bounce — creates natural feel
+  const hemi = new THREE.HemisphereLight(0xfff0d8, 0x9a8a6a, 0.35);
+  scene.add(hemi);
+  
+  // Main sunlight
+  const sun = new THREE.DirectionalLight(0xfff5e0, 0.65);
   sun.position.set(20, 35, 18);
   sun.castShadow = true;
   sun.shadow.mapSize.width = 4096;
@@ -779,35 +793,71 @@ function setupLighting() {
   sun.shadow.camera.top = 30;
   sun.shadow.camera.bottom = -30;
   sun.shadow.bias = -0.0005;
+  sun.shadow.normalBias = 0.02;
   scene.add(sun);
   
-  const fill = new THREE.DirectionalLight(0xc8d4e0, 0.25);
+  // Cool fill from opposite side
+  const fill = new THREE.DirectionalLight(0xb0c8d8, 0.2);
   fill.position.set(-15, 20, -10);
   scene.add(fill);
   
-  // Warm office glow
-  const warm = new THREE.PointLight(0xffcc80, 0.4, 25);
+  // Warm office glow over meeting table
+  const warm = new THREE.PointLight(0xffcc80, 0.5, 22);
   warm.position.set(0, 5, -ROOM_DEPTH/2 + 6);
   scene.add(warm);
+  
+  // Cool glow near server room
+  const serverGlow = new THREE.PointLight(0x4488ff, 0.3, 12);
+  serverGlow.position.set(-ROOM_WIDTH/2 + 4, 2, -ROOM_DEPTH/2 + 3.5);
+  scene.add(serverGlow);
+  
+  // Warm kitchen glow
+  const kitchenGlow = new THREE.PointLight(0xffd0a0, 0.25, 10);
+  kitchenGlow.position.set(-ROOM_WIDTH/2 + 3, 2.5, ROOM_DEPTH/2 - 3);
+  scene.add(kitchenGlow);
+  
+  // Lounge warm lamp
+  const loungeLamp = new THREE.PointLight(0xffbb60, 0.2, 12);
+  loungeLamp.position.set(9, 2.5, 8);
+  scene.add(loungeLamp);
 }
 
 function createRoom() {
-  // Main floor with rug area
+  // Main floor — warm wood-look with subtle variation
   const floorGeo = new THREE.PlaneGeometry(ROOM_WIDTH, ROOM_DEPTH);
-  const floorMat = new THREE.MeshStandardMaterial({ color: 0xe8ddd0, roughness: 0.95 });
+  const floorMat = new THREE.MeshStandardMaterial({ color: 0xd8c9b0, roughness: 0.85, metalness: 0.0 });
   const floor = new THREE.Mesh(floorGeo, floorMat);
   floor.rotation.x = -Math.PI / 2;
   floor.receiveShadow = true;
   scene.add(floor);
   
-  // Meeting area rug
+  // Floor plank lines for texture feel
+  for (let i = 0; i < 8; i++) {
+    const plank = new THREE.Mesh(
+      new THREE.BoxGeometry(ROOM_WIDTH, 0.005, 0.03),
+      new THREE.MeshBasicMaterial({ color: 0xc4b498, transparent: true, opacity: 0.15 })
+    );
+    plank.position.set(0, 0.015, -ROOM_DEPTH/2 + 2 + i * 3);
+    scene.add(plank);
+  }
+  
+  // Meeting area rug — deeper blue with pattern
   const rugGeo = new THREE.CircleGeometry(5, 32);
-  const rugMat = new THREE.MeshStandardMaterial({ color: 0x6b8cae, roughness: 1 });
+  const rugMat = new THREE.MeshStandardMaterial({ color: 0x5a7a9e, roughness: 1, metalness: 0.05 });
   const rug = new THREE.Mesh(rugGeo, rugMat);
   rug.rotation.x = -Math.PI / 2;
   rug.position.set(0, 0.02, -ROOM_DEPTH/2 + 6.5);
   rug.receiveShadow = true;
   scene.add(rug);
+  
+  // Rug border ring
+  const rugBorder = new THREE.Mesh(
+    new THREE.RingGeometry(4.5, 4.8, 32),
+    new THREE.MeshBasicMaterial({ color: 0x7a9abe, transparent: true, opacity: 0.4, side: THREE.DoubleSide })
+  );
+  rugBorder.rotation.x = -Math.PI / 2;
+  rugBorder.position.set(0, 0.03, -ROOM_DEPTH/2 + 6.5);
+  scene.add(rugBorder);
   
   // Lounge rug
   const loungeRug = new THREE.Mesh(new THREE.BoxGeometry(7, 0.03, 5), new THREE.MeshStandardMaterial({ color: 0x8a6b5a, roughness: 1 }));
@@ -1360,57 +1410,136 @@ function createAgents() {
     group.position.set(startPos.x, 0, startPos.z);
     
     const color = new THREE.Color(agent.color);
-    const mat = new THREE.MeshStandardMaterial({ color: color, roughness: 0.5 });
-    const darkMat = new THREE.MeshStandardMaterial({ color: 0x2a2a35 });
-    const skinMat = new THREE.MeshStandardMaterial({ color: 0xf0d0b0 });
+    const mat = new THREE.MeshStandardMaterial({ color: color, roughness: 0.55, metalness: 0.05 });
+    const darkMat = new THREE.MeshStandardMaterial({ color: 0x2a2a35, roughness: 0.7 });
+    const skinMat = new THREE.MeshStandardMaterial({ color: 0xf0d0b0, roughness: 0.6 });
+    const shoeMat = new THREE.MeshStandardMaterial({ color: 0x1a1a22, roughness: 0.4 });
     
-    // Body
-    const body = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.55, 0.26), mat);
-    body.position.y = 0.85;
+    // Torso (slightly tapered — wider at shoulders)
+    const body = new THREE.Mesh(new THREE.BoxGeometry(0.44, 0.58, 0.28), mat);
+    body.position.y = 0.87;
     body.castShadow = true;
     group.add(body);
     
-    // Head
-    const head = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.3, 0.28), skinMat);
-    head.position.y = 1.35;
+    // Shoulder width hint
+    const shoulders = new THREE.Mesh(new THREE.BoxGeometry(0.48, 0.12, 0.3), mat);
+    shoulders.position.y = 1.12;
+    shoulders.castShadow = true;
+    group.add(shoulders);
+    
+    // Neck
+    const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.08, 0.1, 8), skinMat);
+    neck.position.y = 1.22;
+    group.add(neck);
+    
+    // Head — slightly rounded using box with beveled feel
+    const head = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.32, 0.3), skinMat);
+    head.position.y = 1.42;
     head.castShadow = true;
     group.add(head);
     
-    // Hair
-    const hair = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.1, 0.3), darkMat);
-    hair.position.y = 1.52;
+    // Hair — varies per agent
+    const hairColors = [0x1a1a2a, 0x3a2a1a, 0x5a3a2a, 0x2a2a3a, 0x4a3a2a];
+    const hairColor = hairColors[i % hairColors.length];
+    const hairMat = new THREE.MeshStandardMaterial({ color: hairColor, roughness: 0.85 });
+    const hair = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.14, 0.32), hairMat);
+    hair.position.y = 1.58;
+    hair.castShadow = true;
     group.add(hair);
     
-    // Eyes
+    // Eyes — small dark spheres facing forward
     const eyeMat = new THREE.MeshBasicMaterial({ color: 0x1a1a2e });
-    const leftEye = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.04, 0.02), eyeMat);
-    leftEye.position.set(-0.07, 1.38, 0.14);
+    const leftEye = new THREE.Mesh(new THREE.SphereGeometry(0.025, 8, 8), eyeMat);
+    leftEye.position.set(-0.08, 1.44, 0.15);
     group.add(leftEye);
-    const rightEye = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.04, 0.02), eyeMat);
-    rightEye.position.set(0.07, 1.38, 0.14);
+    const rightEye = new THREE.Mesh(new THREE.SphereGeometry(0.025, 8, 8), eyeMat);
+    rightEye.position.set(0.08, 1.44, 0.15);
     group.add(rightEye);
     
-    // Arms
-    const armGeo = new THREE.BoxGeometry(0.1, 0.45, 0.1);
-    const leftArm = new THREE.Mesh(armGeo, mat);
-    leftArm.position.set(-0.28, 0.9, 0);
+    // Smile (subtle curve via thin box)
+    const smile = new THREE.Mesh(
+      new THREE.BoxGeometry(0.1, 0.015, 0.02),
+      new THREE.MeshBasicMaterial({ color: 0xaa6644 })
+    );
+    smile.position.set(0, 1.34, 0.15);
+    group.add(smile);
+    
+    // Arms — upper + lower for elbow bend
+    const armMat = mat.clone();
+    const upperArmGeo = new THREE.BoxGeometry(0.1, 0.28, 0.1);
+    const lowerArmGeo = new THREE.BoxGeometry(0.09, 0.25, 0.09);
+    
+    const leftArm = new THREE.Group();
+    const leftUpperArm = new THREE.Mesh(upperArmGeo, armMat);
+    leftUpperArm.position.y = -0.14;
+    leftUpperArm.castShadow = true;
+    leftArm.add(leftUpperArm);
+    const leftLowerArm = new THREE.Mesh(lowerArmGeo, armMat);
+    leftLowerArm.position.y = -0.38;
+    leftLowerArm.castShadow = true;
+    leftArm.add(leftLowerArm);
+    leftArm.position.set(-0.30, 1.08, 0);
     group.add(leftArm);
-    const rightArm = new THREE.Mesh(armGeo, mat);
-    rightArm.position.set(0.28, 0.9, 0);
+    
+    const rightArm = new THREE.Group();
+    const rightUpperArm = new THREE.Mesh(upperArmGeo, armMat);
+    rightUpperArm.position.y = -0.14;
+    rightUpperArm.castShadow = true;
+    rightArm.add(rightUpperArm);
+    const rightLowerArm = new THREE.Mesh(lowerArmGeo, armMat);
+    rightLowerArm.position.y = -0.38;
+    rightLowerArm.castShadow = true;
+    rightArm.add(rightLowerArm);
+    rightArm.position.set(0.30, 1.08, 0);
     group.add(rightArm);
     
-    // Legs
-    const legGeo = new THREE.BoxGeometry(0.12, 0.5, 0.15);
-    const leftLeg = new THREE.Mesh(legGeo, darkMat);
-    leftLeg.position.set(-0.12, 0.25, 0);
+    // Hands
+    const handMat = new THREE.MeshStandardMaterial({ color: 0xf0d0b0, roughness: 0.6 });
+    const leftHand = new THREE.Mesh(new THREE.SphereGeometry(0.06, 8, 8), handMat);
+    leftHand.position.y = -0.52;
+    leftArm.add(leftHand);
+    const rightHand = new THREE.Mesh(new THREE.SphereGeometry(0.06, 8, 8), handMat);
+    rightHand.position.y = -0.52;
+    rightArm.add(rightHand);
+    
+    // Legs — upper + lower for knee bend
+    const legMat = darkMat.clone();
+    const upperLegGeo = new THREE.BoxGeometry(0.13, 0.28, 0.16);
+    const lowerLegGeo = new THREE.BoxGeometry(0.12, 0.24, 0.14);
+    
+    const leftLeg = new THREE.Group();
+    const leftUpperLeg = new THREE.Mesh(upperLegGeo, legMat);
+    leftUpperLeg.position.y = -0.14;
+    leftUpperLeg.castShadow = true;
+    leftLeg.add(leftUpperLeg);
+    const leftLowerLeg = new THREE.Mesh(lowerLegGeo, legMat);
+    leftLowerLeg.position.y = -0.38;
+    leftLowerLeg.castShadow = true;
+    leftLeg.add(leftLowerLeg);
+    const leftShoe = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.06, 0.22), shoeMat);
+    leftShoe.position.set(0, -0.52, 0.04);
+    leftLeg.add(leftShoe);
+    leftLeg.position.set(-0.12, 0.58, 0);
     group.add(leftLeg);
-    const rightLeg = new THREE.Mesh(legGeo, darkMat);
-    rightLeg.position.set(0.12, 0.25, 0);
+    
+    const rightLeg = new THREE.Group();
+    const rightUpperLeg = new THREE.Mesh(upperLegGeo, legMat);
+    rightUpperLeg.position.y = -0.14;
+    rightUpperLeg.castShadow = true;
+    rightLeg.add(rightUpperLeg);
+    const rightLowerLeg = new THREE.Mesh(lowerLegGeo, legMat);
+    rightLowerLeg.position.y = -0.38;
+    rightLowerLeg.castShadow = true;
+    rightLeg.add(rightLowerLeg);
+    const rightShoe = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.06, 0.22), shoeMat);
+    rightShoe.position.set(0, -0.52, 0.04);
+    rightLeg.add(rightShoe);
+    rightLeg.position.set(0.12, 0.58, 0);
     group.add(rightLeg);
     
-    // Mood ring
-    const ringGeo = new THREE.TorusGeometry(0.4, 0.03, 8, 32);
-    const ringMat = new THREE.MeshBasicMaterial({ color: agent.color, transparent: true, opacity: 0.6 });
+    // Mood ring — softer, pulsing
+    const ringGeo = new THREE.TorusGeometry(0.42, 0.025, 8, 48);
+    const ringMat = new THREE.MeshBasicMaterial({ color: agent.color, transparent: true, opacity: 0.4 });
     const ring = new THREE.Mesh(ringGeo, ringMat);
     ring.rotation.x = Math.PI/2;
     ring.position.y = 0.02;
@@ -1427,15 +1556,19 @@ function createAgents() {
     scene.add(label);
     
     // Invisible click target
-    const clickTarget = new THREE.Mesh(new THREE.BoxGeometry(0.6, 2, 0.6), new THREE.MeshBasicMaterial({ visible: false }));
+    const clickTarget = new THREE.Mesh(new THREE.BoxGeometry(0.7, 2.2, 0.7), new THREE.MeshBasicMaterial({ visible: false }));
     clickTarget.position.y = 1;
     group.add(clickTarget);
     clickTarget.userData = { agentId: agent.id };
     clickableObjects.push(clickTarget);
     
     agents.push({
-      group, body, head, leftArm, rightArm, leftLeg, rightLeg, ring, agent, label, clickTarget,
-      walkCycle: 0, time: Math.random() * 100, coffeeMug: null, onPhone: false
+      group, body, head, hair, neck, shoulders, smile, leftArm, rightArm, leftLeg, rightLeg,
+      leftUpperArm, leftLowerArm, rightUpperArm, rightLowerArm,
+      leftUpperLeg, leftLowerLeg, rightUpperLeg, rightLowerLeg,
+      ring, agent, label, clickTarget,
+      walkCycle: 0, time: Math.random() * 100, coffeeMug: null, onPhone: false,
+      activeBubble: null, lastBubble: 0, blinkTimer: 0
     });
   });
 }
@@ -1764,60 +1897,133 @@ function animateAgents(delta) {
     const dz = state.targetZ - a.group.position.z;
     const dist = Math.sqrt(dx * dx + dz * dz);
     
-    // Mood ring pulse
-    const pulse = 0.6 + Math.sin(a.time * 3) * 0.3;
-    a.ring.material.opacity = pulse;
+    // Mood ring pulse — synced with agent mood
+    const moodPulse = 0.3 + Math.sin(a.time * 2.5) * 0.2;
+    a.ring.material.opacity = moodPulse;
     a.ring.material.color.set(a.agent.color);
     
+    // Eye blink
+    a.blinkTimer += delta;
+    if (a.blinkTimer > 3 + Math.random() * 2) {
+      a.blinkTimer = 0;
+    }
+    
     if (dist > 0.4) {
-      a.walkCycle += delta * 9;
-      const speed = 2.2 * delta;
+      // Walking — smooth with elbow and knee bend
+      a.walkCycle += delta * 8;
+      const speed = 2.0 * delta;
       a.group.position.x += (dx / dist) * speed;
       a.group.position.z += (dz / dist) * speed;
       
-      a.group.rotation.y = Math.atan2(dx, dz);
+      // Smooth turn toward direction
+      const targetAngle = Math.atan2(dx, dz);
+      let angleDiff = targetAngle - a.group.rotation.y;
+      while (angleDiff > Math.PI) angleDiff -= Math.PI * 2;
+      while (angleDiff < -Math.PI) angleDiff += Math.PI * 2;
+      a.group.rotation.y += angleDiff * 0.15;
       
-      const swing = Math.sin(a.walkCycle) * 0.5;
+      const swing = Math.sin(a.walkCycle) * 0.6;
+      const swing2 = Math.sin(a.walkCycle + Math.PI) * 0.6;
+      
+      // Legs swing from hip (group rotation)
       a.leftLeg.rotation.x = swing;
-      a.rightLeg.rotation.x = -swing;
-      a.leftArm.rotation.x = -swing * 0.6;
-      a.rightArm.rotation.x = swing * 0.6;
+      a.rightLeg.rotation.x = swing2;
       
-      a.group.position.y = Math.abs(Math.sin(a.walkCycle * 2)) * 0.06;
+      // Knee bend — bend on backswing
+      a.leftLowerLeg.rotation.x = Math.max(0, -swing * 0.8);
+      a.rightLowerLeg.rotation.x = Math.max(0, -swing2 * 0.8);
       
-      // Only override status to walking if we're actually en route and weren't forced to another state
+      // Arms swing from shoulder
+      a.leftArm.rotation.x = swing2 * 0.5;
+      a.rightArm.rotation.x = swing * 0.5;
+      
+      // Elbow bend slightly
+      a.leftLowerArm.rotation.x = Math.max(0, swing2 * 0.3);
+      a.rightLowerArm.rotation.x = Math.max(0, swing * 0.3);
+      
+      // Body bob
+      a.group.position.y = Math.abs(Math.sin(a.walkCycle * 2)) * 0.08;
+      
+      // Slight body lean forward
+      a.body.rotation.x = 0.08;
+      a.shoulders.rotation.x = 0.06;
+      
+      // Only override status to walking if we're actually en route
       if (state.status !== 'meeting' && state.status !== 'working' && state.status !== 'idle') {
         state.status = 'walking';
       }
     } else {
-      // Arrived: lock in the intended status from updateBehavior, or default to idle
+      // Arrived
       if (state.status === 'walking') {
         state.status = 'idle';
         state.task = state.task || 'Idle';
       }
       
-      // Idle / working
+      // Smoothly relax walking poses
       a.group.position.y *= 0.9;
-      a.leftLeg.rotation.x *= 0.9;
-      a.rightLeg.rotation.x *= 0.9;
+      a.leftLeg.rotation.x *= 0.85;
+      a.rightLeg.rotation.x *= 0.85;
+      a.leftLowerLeg.rotation.x *= 0.85;
+      a.rightLowerLeg.rotation.x *= 0.85;
+      a.body.rotation.x *= 0.9;
+      a.shoulders.rotation.x *= 0.9;
+      
+      // Breathing idle
+      const breath = Math.sin(a.time * 1.5) * 0.02;
+      a.body.position.y = 0.87 + breath;
+      a.shoulders.position.y = 1.12 + breath * 0.5;
+      a.head.position.y = 1.42 + breath * 0.3;
+      a.neck.position.y = 1.22 + breath * 0.2;
+      a.hair.position.y = 1.58 + breath * 0.3;
+      
+      // Arms relax
+      a.leftArm.position.y = 1.08;
+      a.rightArm.position.y = 1.08;
       a.leftArm.rotation.x *= 0.9;
       a.rightArm.rotation.x *= 0.9;
+      a.leftArm.rotation.z = Math.sin(a.time * 0.8) * 0.05;
+      a.rightArm.rotation.z = -Math.sin(a.time * 0.8) * 0.05;
+      a.leftLowerArm.rotation.x *= 0.9;
+      a.rightLowerArm.rotation.x *= 0.9;
       
-      const bob = Math.sin(a.time * 2) * 0.015;
-      a.body.position.y = 0.85 + bob;
-      a.head.position.y = 1.35 + bob;
-      a.leftArm.position.y = 0.9 + bob;
-      a.rightArm.position.y = 0.9 + bob;
-      a.leftLeg.position.y = 0.25;
-      a.rightLeg.position.y = 0.25;
+      // Legs settle
+      a.leftLeg.position.y = 0.58;
+      a.rightLeg.position.y = 0.58;
+      a.leftLowerLeg.rotation.x *= 0.9;
+      a.rightLowerLeg.rotation.x *= 0.9;
       
       if (state.status === 'working') {
-        a.leftArm.rotation.x = Math.sin(a.time * 8) * 0.25;
-        a.rightArm.rotation.x = -Math.sin(a.time * 8) * 0.25;
+        // Typing — hands move up and down, elbows bent
+        const typeSpeed = a.agent.typing ? 10 : 6;
+        a.leftArm.rotation.x = -0.7 + Math.sin(a.time * typeSpeed) * 0.08;
+        a.rightArm.rotation.x = -0.7 + Math.sin(a.time * typeSpeed + 0.3) * 0.08;
+        a.leftLowerArm.rotation.x = 0.6 + Math.sin(a.time * typeSpeed) * 0.05;
+        a.rightLowerArm.rotation.x = 0.6 + Math.sin(a.time * typeSpeed + 0.3) * 0.05;
+        a.leftArm.rotation.z = 0.15;
+        a.rightArm.rotation.z = -0.15;
+        // Lean forward slightly
+        a.body.rotation.x = 0.12;
+        a.shoulders.rotation.x = 0.1;
+        a.head.rotation.x = 0.08;
         createTypingParticles(a);
+      } else if (state.status === 'meeting') {
+        // Meeting — gesturing
+        a.rightArm.rotation.x = -0.3 + Math.sin(a.time * 1.5) * 0.2;
+        a.rightLowerArm.rotation.x = 0.3 + Math.sin(a.time * 1.5 + 0.5) * 0.15;
+        a.leftArm.rotation.x = -0.2;
+        a.leftLowerArm.rotation.x = 0.3;
+        a.head.rotation.y = Math.sin(a.time * 0.3) * 0.25;
+      } else {
+        // Idle — head looks around, occasional stretch
+        a.head.rotation.y = Math.sin(a.time * 0.4) * 0.2;
+        a.head.rotation.x = Math.sin(a.time * 0.3) * 0.05;
+        
+        // Occasional arm stretch
+        if (Math.sin(a.time * 0.2) > 0.95) {
+          a.rightArm.rotation.x = -0.5;
+          a.rightLowerArm.rotation.x = 0.2;
+        }
       }
-      
-      a.head.rotation.y = Math.sin(a.time * 0.4) * 0.15;
     }
     
     a.label.position.set(a.group.position.x, a.group.position.y + 2.3, a.group.position.z);
@@ -1834,9 +2040,9 @@ function onWindowResize() {
 
 function animate() {
   requestAnimationFrame(animate);
-  const delta = clock.getDelta();
+  const delta = Math.min(clock.getDelta(), 0.05);
   
-  if (autoRotate) targetRotation += 0.001;
+  if (autoRotate) targetRotation += 0.0008;
   currentRotation += (targetRotation - currentRotation) * 0.04;
   updateCamera();
   
