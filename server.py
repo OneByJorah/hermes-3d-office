@@ -19,15 +19,18 @@ Environment variables (see .env.example):
     ENABLE_SSE            Enable Server-Sent Events for live browser updates
 """
 import http.server
-import socketserver
-import os
 import json
-import time
+import logging
+import os
+import socketserver
 import threading
+import time
 import urllib.request
-from pathlib import Path
-from urllib.parse import urlparse, parse_qs
 from http import HTTPStatus
+from pathlib import Path
+from urllib.parse import urlparse
+
+logger = logging.getLogger("hermes-office")
 
 PORT = int(os.environ.get("PORT", "9502"))
 HOST = os.environ.get("HOST", "0.0.0.0")
@@ -138,7 +141,7 @@ def _read_agents_json():
                 if isinstance(data, dict) and "agents" in data:
                     return data["agents"]
     except Exception as e:
-        print(f"[agents.json] read failed: {e}")
+        logger.error("Failed to read agents.json: %s", e)
     return None
 
 
@@ -157,7 +160,7 @@ def _fetch_hermes_agents():
             if isinstance(data, dict):
                 return data.get("agents", data.get("results", []))
     except Exception as e:
-        print(f"[Hermes API] poll failed: {e}")
+        logger.error("Failed to poll Hermes API: %s", e)
     return None
 
 
@@ -353,12 +356,11 @@ def main():
     socketserver.TCPServer.allow_reuse_address = True
     with socketserver.TCPServer((HOST, PORT), Handler) as httpd:
         mode = "DEMO" if DEMO_MODE else ("Hermes API" if HERMES_AGENT_API else "agents.json file")
-        print(f"🖥  Hermes 3D Office running at http://{HOST}:{PORT}")
-        print(f"🔗 Tailscale URL: http://100.66.142.21:{PORT}")
-        print(f"📡 Mode: {mode}")
-        print(f"📊 Agent API: http://{HOST}:{PORT}/api/agents")
-        print(f"🔔 Webhook: POST http://{HOST}:{PORT}/webhook/agents")
-        print(f"⚙️  Config: http://{HOST}:{PORT}/api/config")
+        print(f"🖥  Hermes 3D Office running at http://{HOST}:{PORT}", flush=True)
+        print(f"📡 Mode: {mode}", flush=True)
+        print(f"📊 Agent API: http://{HOST}:{PORT}/api/agents", flush=True)
+        print(f"🔔 Webhook: POST http://{HOST}:{PORT}/webhook/agents", flush=True)
+        print(f"⚙️  Config: http://{HOST}:{PORT}/api/config", flush=True)
         httpd.serve_forever()
 
 

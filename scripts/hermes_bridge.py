@@ -184,6 +184,11 @@ def get_agent_status_counts(snapshot):
     return snapshot.get("agent_status", {})
 
 
+# Time thresholds (seconds)
+_ONE_HOUR = 3600
+_FOUR_HOURS = 14400
+
+
 def derive_agent_status(agent_id, gateway_snapshot, gateway_activity, sessions, cron_jobs, content_stats, board_tasks):
     """
     Derive live status for an agent from multiple data sources.
@@ -233,11 +238,11 @@ def derive_agent_status(agent_id, gateway_snapshot, gateway_activity, sessions, 
             mood = 0.95
         else:
             age = now - float(started) if started else 999
-            if age < 3600:
+            if age < _ONE_HOUR:
                 status = "working"
                 task = title[:80]
                 mood = 0.8
-            elif age < 14400:
+            elif age < _FOUR_HOURS:
                 status = "idle"
                 task = f"Last: {title[:60]}"
                 mood = 0.6
@@ -253,11 +258,11 @@ def derive_agent_status(agent_id, gateway_snapshot, gateway_activity, sessions, 
             from datetime import datetime
             gw_time = datetime.fromisoformat(latest_gw_time.replace("Z", "+00:00")).timestamp()
             age = now - gw_time
-            if age < 3600:
+            if age < _ONE_HOUR:
                 status = "working"
                 task = latest_gw_task[:80]
                 mood = 0.85
-            elif age < 14400:
+            elif age < _FOUR_HOURS:
                 task = f"Last: {latest_gw_task[:60]}"
                 mood = 0.55
         except Exception:
@@ -323,7 +328,7 @@ def build_agents_json(gateway_url):
     agents = []
     for agent_id, base in BASE_AGENTS.items():
         status, task, tasks_list, stats, mood, typing, outputs = derive_agent_status(
-            agent_id, snapshot, gateway_activity, sessions, cron_jobs, content_stats, board_tasks
+            agent_id, snapshot, gateway_activity, sessions, cron_jobs, content_stats, board_tasks,
         )
 
         agents.append({
