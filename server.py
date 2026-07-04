@@ -354,7 +354,7 @@ def main():
     with socketserver.TCPServer((HOST, PORT), Handler) as httpd:
         mode = "DEMO" if DEMO_MODE else ("Hermes API" if HERMES_AGENT_API else "agents.json file")
         print(f"🖥  Hermes 3D Office running at http://{HOST}:{PORT}")
-        print(f"🔗 Tailscale URL: http://100.66.142.21:{PORT}")
+        print(f"🔗 Tailscale URL: http://<your-tailscale-ip>:{PORT}")
         print(f"📡 Mode: {mode}")
         print(f"📊 Agent API: http://{HOST}:{PORT}/api/agents")
         print(f"🔔 Webhook: POST http://{HOST}:{PORT}/webhook/agents")

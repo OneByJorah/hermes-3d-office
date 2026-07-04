@@ -119,7 +119,7 @@ sudo systemctl enable --now hermes-office@j1admin
 If you run the server on a Tailscale node:
 
 ```
-http://100.66.142.21:9502
+http://<your-tailscale-ip>:9502
 ```
 
 For a cleaner URL, run on that node:
