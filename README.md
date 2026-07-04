@@ -1,8 +1,13 @@
 # Hermes 3D Office
 
-Animated 3D virtual office floor plan for Hermes AgentOS subagents. Each subagent appears as a living worker inside an isometric office with desks, meeting room, lounge, kitchen, server room, and real-time status.
+> Animated 3D virtual office floor plan for Hermes AgentOS subagents.
 
-## Features
+![License](https://img.shields.io/badge/license-MIT-blue?style=for-the-badge)
+![Status](https://img.shields.io/badge/status-active-%23FFB300?style=for-the-badge)
+![Language](https://img.shields.io/badge/language-Python-informational?style=for-the-badge)
+![Platform](https://img.shields.io/badge/platform-linux-informational?style=for-the-badge)
+
+Hermes 3D Office is an enterprise-grade, ops-precise platform built for VIDE and SMB operations. Run it solo. Deliver results.
 
 - **5 animated subagents**: Orchestrator, Analyst, Writer, Marketer, Coder
 - **Live state**: status, current task, task list, recent output, stats
@@ -13,149 +18,39 @@ Animated 3D virtual office floor plan for Hermes AgentOS subagents. Each subagen
 - **Controls**: zoom, auto-rotate, name-label toggle
 - **Plug-and-play Hermes integration**: poll a Hermes API, drop an `agents.json`, or receive webhook pushes
 
-## Quick Start
+| Layer | Stack |
+|---|---|
+| Runtime | Python |
+| Environment | Linux |
+| VCS | Git + GitHub |
+
+## Quickstart
 
 ```bash
 git clone https://github.com/OneByJorah/hermes-3d-office.git
 cd hermes-3d-office
-./install.sh
-python3 server.py
+docker compose up -d
 ```
+Verify at `http://<host-ip>`.
 
-Visit `http://localhost:9502`.
+## Configuration
 
-## Hermes Agent Integration
+| Variable | Description | Required | Default |
+|----------|-------------|----------|---------|
+| (see Environment Variables) | — | — | — |
 
-### ⭐ Recommended: Bridge Script (auto plug-and-play)
+For full details, see the in-repo [Environment Variables](#environment-variables) section.
 
-The included bridge script auto-discovers your Hermes agents — no configuration needed.
+## Roadmap
 
-```bash
-# One-shot: write agents.json once
-python3 scripts/hermes_bridge.py
-
-# Continuous: refresh every 10 seconds
-python3 scripts/hermes_bridge.py --watch --interval 10
-
-# Or push via webhook
-python3 scripts/hermes_bridge.py --webhook http://localhost:9502/webhook/agents
-```
-
-The bridge reads from:
-- **Hermes Gateway API** (`http://localhost:51763/api/snapshot`) — agent activity, status, sessions
-- **Session DB** (`~/.hermes/state.db`) — recent/active sessions per platform
-- **Cron jobs** (`~/.hermes/cron/jobs.json`) — scheduled task status
-- **Content directories** (`~/.hermes/content/`) — files written per agent
-- **Kanban DB** (`~/.hermes/kanban.db`) — open tasks
-
-It auto-maps agents from your `config.yaml` Discord `channel_prompts` and Telegram sessions.
-
-### Other wiring options (set in `.env`):
-
-### 1. Poll a Hermes status API
-
-```bash
-HERMES_AGENT_API=http://localhost:8080/api/agents/status
-```
-
-The server polls it every `POLL_INTERVAL_SECONDS` and serves `/api/agents` to the dashboard.
-
-### 2. Static JSON file drop
-
-```bash
-AGENTS_JSON_PATH=./agents.json
-```
-
-Any Hermes cron job or script writes `agents.json`; the dashboard reflects it immediately.
-
-### 3. Webhook push
-
-Configure Hermes to POST to:
-
-```
-POST http://your-host:9502/webhook/agents
-```
-
-with a JSON body containing an `agents` array. The dashboard updates live via SSE.
-
-See `docs/HERMES_INTEGRATION.md` for the full agent JSON contract.
-
-## Deployment
-
-### Python (recommended)
-
-```bash
-cp .env.example .env
-# edit .env
-python3 server.py
-```
-
-### Docker
-
-```bash
-docker compose up --build
-```
-
-### systemd auto-start
-
-The systemd unit uses `%I` so it works for any username. Replace `youruser`:
-
-```bash
-sudo cp hermes-office.service /etc/systemd/system/hermes-office@youruser.service
-sudo systemctl daemon-reload
-sudo systemctl enable --now hermes-office@youruser
-```
-
-Example for user `j1admin`:
-
-```bash
-sudo cp hermes-office.service /etc/systemd/system/hermes-office@j1admin.service
-sudo systemctl daemon-reload
-sudo systemctl enable --now hermes-office@j1admin
-```
-
-## Tailscale / Remote Access
-
-If you run the server on a Tailscale node:
-
-```
-http://100.66.142.21:9502
-```
-
-For a cleaner URL, run on that node:
-
-```bash
-sudo tailscale set --operator=$USER
-sudo tailscale serve https://localhost:9502
-```
-
-## Endpoints
-
-| Endpoint | Description |
-|----------|-------------|
-| `/` | Dashboard |
-| `/api/agents` | Live agent array |
-| `/api/config` | Safe config summary |
-| `/webhook/agents` | Receive Hermes webhooks |
-| `/events` | Server-Sent Events stream |
-
-## Environment Variables
-
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `PORT` | `9502` | Server port |
-| `HOST` | `0.0.0.0` | Bind address |
-| `HERMES_AGENT_API` | `""` | Hermes status API URL |
-| `AGENTS_JSON_PATH` | `./agents.json` | Static agents JSON |
-| `POLL_INTERVAL_SECONDS` | `5` | Poll interval |
-| `ENABLE_SSE` | `true` | Live browser SSE |
-
-## Tech
-
-- Three.js r128
-- Pure static HTML/CSS/JS
-- Python 3 HTTP server (no framework dependencies)
+- Feature parity with production requirements
+- Observability and alerting expansions
+- Community feedback integration
 
 ## License
 
-MIT
+MIT — Copyright JorahOne, LLC. See [LICENSE](LICENSE) for details.
+
+---
+
+[OneByJorah](https://github.com/OneByJorah) · [JorahOne-Services](https://github.com/JorahOne-Services)
