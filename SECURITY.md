@@ -12,7 +12,7 @@ for receiving patches depends on the CVSS v3.0 rating:
 
 ## Reporting a Vulnerability
 
-Please report security vulnerabilities to **j1admin@onebyjorah.com**. Do NOT
+Please report security vulnerabilities to **security@onebyjorah.com**. Do NOT
 report security vulnerabilities through public GitHub issues.
 
 You should receive a response within 48 hours. If for some reason you do not,
