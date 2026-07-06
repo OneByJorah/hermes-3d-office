@@ -1,8 +1,8 @@
 <div align="center">
-  <img src="https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white">
+  <img src="https://img.shields.io/badge/Python-3.11+-3776AB?style=for-the-badge&logo=python&logoColor=white">
   <img src="https://img.shields.io/badge/Three.js-000000?style=for-the-badge&logo=threedotjs&logoColor=white">
   <img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white">
-  <img src="https://img.shields.io/badge/WebSocket-010101?style=for-the-badge&logo=socketdotio&logoColor=white">
+  <img src="https://img.shields.io/badge/SSE-010101?style=for-the-badge&logo=html5&logoColor=white">
 </div>
 
 <br>
@@ -24,7 +24,7 @@
 ## ✨ Features
 
 - **3D Agent Visualization** — Animated avatars for Orchestrator, Analyst, Writer, Marketer, Coder
-- **Real-Time Updates** — Live agent status via WebSocket, API polling, or webhook push
+- **Real-Time Updates** — Live agent status via Server-Sent Events (SSE), API polling, or webhook push
 - **Interactive UI** — Click-to-inspect agents, camera zoom/rotate, chat bubbles
 - **Detailed Environment** — Server room, meeting area, kitchen, and more
 - **Multiple Data Sources** — Bridge script, API polling, static JSON, webhooks
@@ -35,7 +35,6 @@
 ```bash
 git clone https://github.com/OneByJorah/hermes-3d-office.git
 cd hermes-3d-office
-pip install -r requirements.txt
 python3 server.py
 ```
 
@@ -45,7 +44,7 @@ Or with Docker:
 docker-compose up -d
 ```
 
-Open **http://localhost:8080** in your browser.
+Open **http://localhost:9502** in your browser.
 
 ## 🔗 Data Sources
 
@@ -60,7 +59,7 @@ Open **http://localhost:8080** in your browser.
 
 ```
 hermes-3d-office/
-├── server.py                  # Python/Flask backend server
+├── server.py                  # Python stdlib HTTP server
 ├── public/                    # 3D frontend (Three.js)
 ├── scripts/                   # Bridge and utility scripts
 ├── docs/                      # Documentation
