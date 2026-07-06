@@ -38,6 +38,7 @@ HERMES_AGENT_API = os.environ.get("HERMES_AGENT_API", "").strip()
 AGENTS_JSON_PATH = os.environ.get("AGENTS_JSON_PATH", "").strip() or str(Path(__file__).parent / "agents.json")
 POLL_INTERVAL = int(os.environ.get("POLL_INTERVAL_SECONDS", "5"))
 ENABLE_SSE = os.environ.get("ENABLE_SSE", "true").lower() in ("1", "true", "yes")
+WEBHOOK_SECRET = os.environ.get("WEBHOOK_SECRET", "").strip()
 DEMO_MODE = not (HERMES_AGENT_API or AGENTS_JSON_PATH)
 
 DIRECTORY = Path(__file__).parent / "public"
@@ -249,6 +250,8 @@ class Handler(http.server.SimpleHTTPRequestHandler):
 
     def _read_json_body(self):
         length = int(self.headers.get("Content-Length", "0"))
+        if length > 1_048_576:  # 1MB max
+            raise ValueError("Request body too large (max 1MB)")
         if length:
             return json.loads(self.rfile.read(length).decode("utf-8"))
         return {}
@@ -288,6 +291,12 @@ class Handler(http.server.SimpleHTTPRequestHandler):
     def do_POST(self):
         parsed = urlparse(self.path)
         if parsed.path == "/webhook/agents":
+            # Check webhook auth if configured
+            if WEBHOOK_SECRET:
+                auth = self.headers.get("Authorization", "")
+                if auth != f"Bearer {WEBHOOK_SECRET}":
+                    self._send_json({"ok": False, "error": "Unauthorized"}, HTTPStatus.UNAUTHORIZED)
+                    return
             try:
                 body = self._read_json_body()
                 agents = body.get("agents", body if isinstance(body, list) else [])
