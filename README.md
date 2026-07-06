@@ -1,82 +1,74 @@
+<!-- j1-brand:v2 -->
 <div align="center">
-  <img src="https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white">
-  <img src="https://img.shields.io/badge/Three.js-000000?style=for-the-badge&logo=threedotjs&logoColor=white">
-  <img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white">
-  <img src="https://img.shields.io/badge/WebSocket-010101?style=for-the-badge&logo=socketdotio&logoColor=white">
-</div>
 
-<br>
+# Hermes 3D Office
 
-<div align="center">
-  <h1>🏢 Hermes 3D Office</h1>
-  <p><strong>Animated 3D Virtual Office for Hermes AgentOS Subagents</strong></p>
-  <p>Real-time isometric visualization of AI agents working, walking, meeting, and more</p>
-  <p>
-    <a href="#-features">Features</a> •
-    <a href="#-quick-start">Quick Start</a> •
-    <a href="#-data-sources">Data Sources</a> •
-    <a href="#-architecture">Architecture</a>
-  </p>
+An animated 3D virtual office floor plan that visualizes Hermes AgentOS subagents in real time — watch your AI agents work in an isometric browser scene.
+
+[![GitHub](https://img.shields.io/badge/github-OneByJorah%2Fhermes--3d--office-FFB300?style=for-the-badge&labelColor=0d0d0c)](https://github.com/OneByJorah/hermes-3d-office)
+[![License](https://img.shields.io/badge/license-MIT-FFB300?style=for-the-badge&labelColor=0d0d0c)](LICENSE)
+[![Language](https://img.shields.io/badge/HTML-FFB300?style=for-the-badge&labelColor=0d0d0c)](https://developer.mozilla.org/en-US/docs/Web/HTML)
+[![Built by](https://img.shields.io/badge/built%20by-JorahOne%20LLC-FFB300?style=for-the-badge&labelColor=0d0d0c)](https://github.com/OneByJorah)
+
 </div>
 
 ---
 
-## ✨ Features
+## Why This Exists
 
-- **3D Agent Visualization** — Animated avatars for Orchestrator, Analyst, Writer, Marketer, Coder
-- **Real-Time Updates** — Live agent status via WebSocket, API polling, or webhook push
-- **Interactive UI** — Click-to-inspect agents, camera zoom/rotate, chat bubbles
-- **Detailed Environment** — Server room, meeting area, kitchen, and more
-- **Multiple Data Sources** — Bridge script, API polling, static JSON, webhooks
-- **Bridge Script** — Auto-discovers agents from Hermes Gateway API, Session DB, and Kanban
+When your Hermes agents are running, you can't see them. Hermes 3D Office changes that — rendering each subagent (Orchestrator, Analyst, Writer, etc.) as an animated avatar in an isometric office. Agents move between rooms, update their status in real time via WebSockets, and the scene auto-discovers new agents from the Hermes Gateway API. It's a window into your agent swarm.
 
-## 🚀 Quick Start
+## Key Features
+
+| Feature | Why It Matters |
+|---|---|
+| 3D avatar animations | See which agents are active and what they're doing at a glance |
+| Real-time WebSocket updates | Agent status changes appear instantly in the office |
+| Auto-discovery bridge | Scans Hermes Gateway API, Session DB, and Kanban for new agents |
+| Interactive scene | Zoom, rotate, and pan around the office to inspect agents |
+| Multiple data sources | API polling, static JSON, or webhooks — whichever fits your setup |
+
+## Quick Start
 
 ```bash
 git clone https://github.com/OneByJorah/hermes-3d-office.git
 cd hermes-3d-office
-pip install -r requirements.txt
+
+# Native
 python3 server.py
+
+# Docker
+docker compose up -d
 ```
 
-Or with Docker:
+Open `http://localhost:8080` in your browser.
 
-```bash
-docker-compose up -d
-```
-
-Open **http://localhost:8080** in your browser.
-
-## 🔗 Data Sources
-
-| Source | Method | Description |
-|--------|--------|-------------|
-| Bridge Script | Auto | Auto-discovers agents from Hermes Gateway API |
-| API Polling | Configurable | Polls Hermes status API periodically |
-| Static JSON | File | Direct consumption of `agents.json` |
-| Webhook | POST | Real-time updates via webhook endpoint |
-
-## 🏗️ Architecture
+## Architecture
 
 ```
-hermes-3d-office/
-├── server.py                  # Python/Flask backend server
-├── public/                    # 3D frontend (Three.js)
-├── scripts/                   # Bridge and utility scripts
-├── docs/                      # Documentation
-├── agents.json.example        # Example agent configuration
-├── Dockerfile                 # Container image
-├── docker-compose.yml         # Deployment
-└── requirements.txt           # Python dependencies
+┌──────────────┐     ┌──────────────┐     ┌──────────────┐
+│  Hermes API   │────▶│  Bridge       │────▶│  Flask Server  │
+│  Gateway      │     │  (Auto-disc)  │     │  (Backend)     │
+│  Session DB   │     │               │     └──────┬───────┘
+│  Kanban       │     │               │            │
+└──────────────┘     └──────────────┘     ┌──────▼──────┐
+                                          │  Three.js    │
+                                          │  3D Office   │
+                                          │  (Frontend)  │
+                                          └─────────────┘
 ```
 
-## 📄 License
+## Documentation
 
-MIT © Jhonattan L. Jimenez
+| Doc | Description |
+|---|---|
+| [Setup Guide](docs/setup.md) | Deployment options and configuration |
+| [Bridge Configuration](docs/bridge.md) | Connecting to Hermes Gateway API |
 
 ---
 
-<div align="center">
-  <p>🤖 Watch your agents come to life in 3D</p>
-  <p><a href="https://github.com/OneByJorah">@OneByJorah</a></p>
-</div>
+## License
+
+MIT © JorahOne, LLC — see [LICENSE](LICENSE)
+
+<sub>Part of the JorahOne infrastructure ecosystem.</sub>
