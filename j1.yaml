@@ -1,0 +1,7 @@
+repo: hermes-3d-office
+class: Visualization / Dashboard
+org: OneByJorah
+license: MIT
+production_score: 78
+last_audit: "2026-07-05"
+deploy_target: scratch
