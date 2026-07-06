@@ -54,3 +54,4 @@ Hermes cron jobs or scripts can write `agents.json` into the repo root. The serv
 - Never commit API keys, tokens, or connection strings.
 - Set secrets via environment variables only.
 - Use Tailscale or HTTPS when exposing outside localhost.
+- The webhook endpoint (`POST /webhook/agents`) supports optional Bearer token authentication via the `WEBHOOK_SECRET` environment variable. Set it to protect the endpoint from unauthorized access.
