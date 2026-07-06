@@ -33,7 +33,7 @@ from urllib.parse import urlparse
 logger = logging.getLogger("hermes-office")
 
 PORT = int(os.environ.get("PORT", "9502"))
-HOST = os.environ.get("HOST", "0.0.0.0")
+HOST = os.environ.get("HOST", "127.0.0.1")
 HERMES_AGENT_API = os.environ.get("HERMES_AGENT_API", "").strip()
 AGENTS_JSON_PATH = os.environ.get("AGENTS_JSON_PATH", "").strip() or str(Path(__file__).parent / "agents.json")
 POLL_INTERVAL = int(os.environ.get("POLL_INTERVAL_SECONDS", "5"))
