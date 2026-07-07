@@ -21,6 +21,11 @@
 
 ---
 
+## 📸 Screenshot
+
+![Hermes 3D Office](docs/screenshot.png)
+*Animated 3D virtual office with real-time Hermes agent visualization*
+
 ## ✨ Features
 
 - **3D Agent Visualization** — Animated avatars for Orchestrator, Analyst, Writer, Marketer, Coder
