@@ -1,10 +1,37 @@
+version: "3.9"
+
+# ============================================================================
+# Hermes 3D Office — Virtual agent office dashboard
+# JorahOne
+#
+# Serves the static 3D office dashboard with live agent-state API.
+# Supports demo mode, Hermes API polling, or agents.json file drop.
+# ============================================================================
+
 services:
   office:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: jorahone/hermes-3d-office:latest
+    container_name: hermes-3d-office
     ports:
       - "${PORT:-9502}:${PORT:-9502}"
     env_file:
       - .env
+    environment:
+      - PORT=${PORT:-9502}
+      - HOST=${HOST:-0.0.0.0}
+      - HERMES_AGENT_API=${HERMES_AGENT_API:-}
+      - AGENTS_JSON_PATH=${AGENTS_JSON_PATH:-/app/agents.json}
+      - POLL_INTERVAL_SECONDS=${POLL_INTERVAL_SECONDS:-5}
+      - ENABLE_SSE=${ENABLE_SSE:-true}
     volumes:
       - ./agents.json:/app/agents.json:ro
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:${PORT:-9502}/api/config', timeout=5)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
