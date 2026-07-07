@@ -8,7 +8,7 @@
 <br>
 
 <div align="center">
-  <h1>🏢 Hermes 3D Office</h1>
+  <h1>🏢 VirtOffice</h1>
   <p><strong>Animated 3D Virtual Office for Hermes AgentOS Subagents</strong></p>
   <p>Real-time isometric visualization of AI agents working, walking, meeting, and more</p>
   <p>
@@ -33,8 +33,8 @@
 ## 🚀 Quick Start
 
 ```bash
-git clone https://github.com/OneByJorah/hermes-3d-office.git
-cd hermes-3d-office
+git clone https://github.com/OneByJorah/VirtOffice.git
+cd VirtOffice
 python3 server.py
 ```
 
@@ -58,7 +58,7 @@ Open **http://localhost:9502** in your browser.
 ## 🏗️ Architecture
 
 ```
-hermes-3d-office/
+VirtOffice/
 ├── server.py                  # Python stdlib HTTP server
 ├── public/                    # 3D frontend (Three.js)
 ├── scripts/                   # Bridge and utility scripts

@@ -1,6 +1,6 @@
 # INTENT.md — J1-PIPELINE Phase -1 (ORACLE)
 
-**Repository:** `OneByJorah/hermes-3d-office`
+**Repository:** `OneByJorah/VirtOffice`
 **Analysis Date:** 2026-07-05
 **Analyst:** J1-PIPELINE ORACLE (read-only)
 **Status:** Intent Reconstructed
@@ -9,7 +9,7 @@
 
 ## What This System Does
 
-**Hermes 3D Office** is a real-time 3D virtual office visualization dashboard for AI agents running under the Hermes AgentOS platform. It renders an animated isometric office environment where agent avatars (Orchestrator, Analyst, Writer, Marketer, Coder) are shown working, walking, meeting, or idle — with live status updates, chat bubbles, and click-to-inspect detail panels.
+**VirtOffice** is a real-time 3D virtual office visualization dashboard for AI agents running under the Hermes AgentOS platform. It renders an animated isometric office environment where agent avatars (Orchestrator, Analyst, Writer, Marketer, Coder) are shown working, walking, meeting, or idle — with live status updates, chat bubbles, and click-to-inspect detail panels.
 
 ### Technical Role
 
@@ -64,7 +64,7 @@ JorahOne / OneByJorah Ecosystem
 │   ├── Hermes Kanban (kanban.db — task board)
 │   └── Hermes Content (content/ — agent output files)
 │
-├── hermes-3d-office ← YOU ARE HERE
+├── VirtOffice ← YOU ARE HERE
 │   └── Visual observability layer consuming all of the above
 │
 ├── Other JorahOne repos (hermes-agent, etc.)
@@ -118,7 +118,7 @@ Evidence:
 ## Repository Structure
 
 ```
-hermes-3d-office/
+VirtOffice/
 ├── README.md                    # Primary intent document — features, quick start, architecture
 ├── INTENT.md                    # ← THIS FILE (Phase -1 ORACLE output)
 ├── LICENSE                      # MIT, © Jhonattan L. Jimenez
@@ -162,7 +162,7 @@ hermes-3d-office/
 
 ## Notes
 
-- **Repo name vs README brand** — Consistent. Repo is `hermes-3d-office`, README brand is "Hermes 3D Office". No naming discrepancy.
+- **Repo name vs README brand** — Updated. Repo is now `VirtOffice`, README brand is "VirtOffice". Naming aligned.
 - **Empty directories** — None found.
 - **Submodules** — None.
 - **Security audit history** — Two security-related commits: `f80b28d` ("security: redact exposed tailscale IPs and demo emails") and `0004b82` ("security: redact hardcoded Tailscale IP"). The repo had hardcoded Tailscale IPs and emails that were later sanitized. This is a positive signal — the author actively audits and redacts sensitive data.

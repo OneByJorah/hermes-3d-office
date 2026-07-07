@@ -1,4 +1,4 @@
-# Hermes 3D Office — Agent State API Contract
+# VirtOffice — Agent State API Contract
 
 This dashboard consumes a simple JSON contract. Any Hermes installation can feed live agent data using one of three integration patterns.
 

@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-echo "🖥  Hermes 3D Office installer"
+echo "🖥  VirtOffice installer"
 
 REPO_DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$REPO_DIR"

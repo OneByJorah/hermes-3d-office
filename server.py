@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Hermes 3D Office Dashboard Server
+VirtOffice Dashboard Server
 
 Serves the static 3D office dashboard and provides a live agent-state API.
 Three wiring modes are supported out of the box:
@@ -30,7 +30,7 @@ from http import HTTPStatus
 from pathlib import Path
 from urllib.parse import urlparse
 
-logger = logging.getLogger("hermes-office")
+logger = logging.getLogger("virt-office")
 
 PORT = int(os.environ.get("PORT", "9502"))
 HOST = os.environ.get("HOST", "0.0.0.0")
@@ -152,7 +152,7 @@ def _fetch_hermes_agents():
     try:
         req = urllib.request.Request(
             HERMES_AGENT_API,
-            headers={"Accept": "application/json", "User-Agent": "hermes-3d-office/1.0"},
+            headers={"Accept": "application/json", "User-Agent": "VirtOffice/1.0"},
         )
         with urllib.request.urlopen(req, timeout=8) as resp:
             data = json.loads(resp.read().decode("utf-8"))
@@ -369,7 +369,7 @@ def main():
     socketserver.TCPServer.allow_reuse_address = True
     with socketserver.TCPServer((HOST, PORT), Handler) as httpd:
         mode = "DEMO" if DEMO_MODE else ("Hermes API" if HERMES_AGENT_API else "agents.json file")
-        print(f"🖥  Hermes 3D Office running at http://{HOST}:{PORT}", flush=True)
+        print(f"🖥  VirtOffice running at http://{HOST}:{PORT}", flush=True)
         print(f"📡 Mode: {mode}", flush=True)
         print(f"📊 Agent API: http://{HOST}:{PORT}/api/agents", flush=True)
         print(f"🔔 Webhook: POST http://{HOST}:{PORT}/webhook/agents", flush=True)
