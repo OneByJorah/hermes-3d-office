@@ -53,4 +53,4 @@ Hermes cron jobs or scripts can write `agents.json` into the repo root. The serv
 
 - Never commit API keys, tokens, or connection strings.
 - Set secrets via environment variables only.
-- Use Tailscale or HTTPS when exposing outside localhost.
+- Use Mesh-VPN or HTTPS when exposing outside localhost.
