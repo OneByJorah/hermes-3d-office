@@ -1,10 +1,15 @@
+version: "3.8"
+
 services:
-  office:
-    build: .
+  virtoffice:
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
-      - "${PORT:-9502}:${PORT:-9502}"
-    env_file:
-      - .env
-    volumes:
-      - ./agents.json:/app/agents.json:ro
+      - "9502:9502"
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9502/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
