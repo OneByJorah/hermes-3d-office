@@ -38,8 +38,8 @@
 ## 🚀 Quick Start
 
 ```bash
-git clone https://github.com/OneByJorah/hermes-3d-office.git
-cd hermes-3d-office
+git clone https://github.com/OneByJorah/VirtOffice.git
+cd VirtOffice
 pip install -r requirements.txt
 python3 server.py
 ```
@@ -64,7 +64,7 @@ Open **http://localhost:8080** in your browser.
 ## 🏗️ Architecture
 
 ```
-hermes-3d-office/
+VirtOffice/
 ├── server.py                  # Python/Flask backend server
 ├── public/                    # 3D frontend (Three.js)
 ├── scripts/                   # Bridge and utility scripts
@@ -77,7 +77,7 @@ hermes-3d-office/
 
 ## 📄 License
 
-MIT © Jhonattan L. Jimenez
+MIT © Jhonattan L. Jimenez / JorahOne LLC
 
 ---
 
