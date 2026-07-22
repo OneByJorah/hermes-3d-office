@@ -1,57 +1,41 @@
 # Contributing to JorahOne Projects
 
-First off, thank you for considering contributing! It's people like you that make
-this community great.
+Thank you for your interest in contributing! This document provides guidelines for contributing to our projects.
+
+## How to Contribute
+
+1. **Fork the Repository** — Create a fork of the project on GitHub.
+2. **Create a Branch** — Create a feature branch from `main`.
+3. **Make Changes** — Implement your changes with clear commit messages.
+4. **Test** — Ensure your changes work correctly.
+5. **Submit a PR** — Open a pull request with a clear description.
+
+## Development Setup
+
+```bash
+git clone https://github.com/your-username/PROJECT.git
+cd PROJECT
+# Follow project-specific setup instructions
+```
+
+## Code Standards
+
+- Follow existing code style and conventions
+- Write clear, descriptive commit messages
+- Add comments for complex logic
+- Update documentation as needed
+
+## Pull Request Guidelines
+
+- Provide a clear PR title and description
+- Reference any related issues
+- Include screenshots for UI changes
+- Ensure all checks pass
 
 ## Code of Conduct
 
-This project and everyone participating in it is governed by our Code of Conduct.
-By participating, you are expected to uphold this code.
+Please review our [Code of Conduct](CODE_OF_CONDUCT.md) before contributing.
 
-## How Can I Contribute?
+## Questions?
 
-### Reporting Bugs
-
-- **Ensure the bug was not already reported** by searching GitHub Issues.
-- If you're unable to find an open issue addressing the problem, open a new one.
-- Include a **clear title and description**, as much relevant information as possible,
-  and a **code sample** or **executable test case** demonstrating the expected behavior.
-
-### Suggesting Enhancements
-
-- Open a new GitHub Issue with the enhancement tag.
-- Provide a clear explanation of why this enhancement would be useful.
-
-### Pull Requests
-
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/my-feature`
-3. Commit your changes: `git commit -am 'Add my feature'`
-4. Push to the branch: `git push origin feature/my-feature`
-5. Open a Pull Request
-
-### Styleguides
-
-#### Git Commit Messages
-
-- Use the present tense ("Add feature" not "Added feature")
-- Use the imperative mood ("Move cursor to..." not "Moves cursor to...")
-- Limit the first line to 72 characters or less
-- Reference issues and pull requests liberally after the first line
-
-#### Code Style
-
-Follow the existing code style in the project. When in doubt, match the
-surrounding code. Consistency is key.
-
-## Additional Notes
-
-### Issue and Pull Request Labels
-
-| Label | Description |
-|-------|-------------|
-| `bug` | Something isn't working |
-| `enhancement` | New feature or improvement |
-| `documentation` | Documentation only changes |
-| `security` | Security-related issues |
-| `good first issue` | Good for newcomers |
+Open an issue or contact **info@jorahone.com**.

@@ -1,34 +1,36 @@
 # Security Policy
 
-## Supported Versions
-
-We release patches for security vulnerabilities. Which versions are eligible
-for receiving patches depends on the CVSS v3.0 rating:
-
-| Version | Supported |
-| ------- | ------------------ |
-| Latest  | ✅ |
-| < Latest| ❌ |
-
 ## Reporting a Vulnerability
 
-Please report security vulnerabilities to **security@jorahone.com**. Do NOT
-report security vulnerabilities through public GitHub issues.
+If you discover a security vulnerability, please report it responsibly:
 
-You should receive a response within 48 hours. If for some reason you do not,
-please follow up via email to ensure we received your original message.
+**DO NOT** open a public GitHub issue for security vulnerabilities.
 
-Please include the following information:
+Instead, please email: **info@jorahone.com**
 
-- Type of issue (e.g. buffer overflow, SQL injection, cross-site scripting, etc.)
-- Full paths of source file(s) related to the manifestation of the issue
-- The location of the affected source code (tag/branch/commit or direct URL)
-- Any special configuration required to reproduce the issue
-- Step-by-step instructions to reproduce the issue
-- Proof-of-concept or exploit code (if possible)
-- Impact of the issue, including how an attacker might exploit it
+Include:
+- Description of the vulnerability
+- Steps to reproduce
+- Potential impact
+- Suggested fix (if any)
 
-We prefer to receive reports via email. We will acknowledge receipt within
-48 hours and send a more detailed response within 72 hours.
+## Response Timeline
 
-This project follows a 90-day disclosure timeline.
+- **Acknowledgment**: Within 48 hours
+- **Initial assessment**: Within 1 week
+- **Fix timeline**: Depends on severity
+
+## Supported Versions
+
+| Version | Supported |
+|---------|-----------|
+| Latest  | ✅ Yes    |
+| Older   | ❌ No     |
+
+## Security Best Practices
+
+When deploying our projects:
+- Use environment variables for secrets
+- Enable HTTPS in production
+- Keep dependencies updated
+- Follow principle of least privilege
