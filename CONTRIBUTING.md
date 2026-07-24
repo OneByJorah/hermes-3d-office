@@ -1,41 +1,29 @@
-# Contributing to JorahOne Projects
+# Contributing to OneByJorah projects
 
-Thank you for your interest in contributing! This document provides guidelines for contributing to our projects.
+Thanks for taking the time to contribute! Every island in the JorahOne archipelago gets stronger with community help.
 
-## How to Contribute
+## How to contribute
 
-1. **Fork the Repository** — Create a fork of the project on GitHub.
-2. **Create a Branch** — Create a feature branch from `main`.
-3. **Make Changes** — Implement your changes with clear commit messages.
-4. **Test** — Ensure your changes work correctly.
-5. **Submit a PR** — Open a pull request with a clear description.
+1. **Open an issue first** for bugs, features, or large refactors so we can align on direction.
+2. **Fork the repo** and create a feature branch (`git checkout -b feature/short-name`).
+3. **Keep changes focused** — one concern per pull request.
+4. **Write clear commit messages** in the imperative: `Add SNMP trap handler`, not `Added handler`.
+5. **Update docs** if your change affects usage, configuration, or architecture.
+6. **Test your change** locally before opening a PR.
 
-## Development Setup
+## Pull request checklist
 
-```bash
-git clone https://github.com/your-username/PROJECT.git
-cd PROJECT
-# Follow project-specific setup instructions
-```
+- [ ] Branch is up to date with the default branch.
+- [ ] README/screenshots are updated if the UI or install steps changed.
+- [ ] No secrets, credentials, or private IPs are committed.
+- [ ] License header is preserved on new source files (MIT).
 
-## Code Standards
+## Code style
 
-- Follow existing code style and conventions
-- Write clear, descriptive commit messages
-- Add comments for complex logic
-- Update documentation as needed
-
-## Pull Request Guidelines
-
-- Provide a clear PR title and description
-- Reference any related issues
-- Include screenshots for UI changes
-- Ensure all checks pass
-
-## Code of Conduct
-
-Please review our [Code of Conduct](CODE_OF_CONDUCT.md) before contributing.
+- Python: PEP 8, type hints where helpful.
+- JavaScript/TypeScript: consistent formatting, `const`/`let`, async/await over callbacks.
+- Shell/PowerShell: defensive execution, clear parameter comments.
 
 ## Questions?
 
-Open an issue or contact **info@jorahone.com**.
+Open a [Discussion](https://github.com/OneByJorah/OneByJorah/discussions) or reach out at info@jorahone.com.

@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Ask a question
+    url: https://github.com/OneByJorah/OneByJorah/discussions
+    about: Please use Discussions for general questions and help.
+  - name: Security vulnerability
+    url: https://github.com/OneByJorah/.github/blob/main/SECURITY.md
+    about: Please report security issues privately per our Security Policy.

@@ -1,36 +1,27 @@
 # Security Policy
 
-## Reporting a Vulnerability
+JorahOne projects are self-hosted infrastructure tools. Security matters.
 
-If you discover a security vulnerability, please report it responsibly:
+## Supported versions
 
-**DO NOT** open a public GitHub issue for security vulnerabilities.
+We patch security issues in the latest release of the default branch. Older releases are best-effort.
 
-Instead, please email: **info@jorahone.com**
+## Reporting a vulnerability
 
-Include:
-- Description of the vulnerability
-- Steps to reproduce
-- Potential impact
-- Suggested fix (if any)
+Please **do not** open a public issue for security vulnerabilities.
 
-## Response Timeline
+Instead, email `security@jorahone.com` with:
 
-- **Acknowledgment**: Within 48 hours
-- **Initial assessment**: Within 1 week
-- **Fix timeline**: Depends on severity
+- Affected repository and version/branch.
+- Steps to reproduce or proof-of-concept.
+- Possible impact.
+- Suggested fix (optional).
 
-## Supported Versions
+We will respond within 72 hours and coordinate disclosure.
 
-| Version | Supported |
-|---------|-----------|
-| Latest  | ✅ Yes    |
-| Older   | ❌ No     |
+## Security practices for self-hosters
 
-## Security Best Practices
-
-When deploying our projects:
-- Use environment variables for secrets
-- Enable HTTPS in production
-- Keep dependencies updated
-- Follow principle of least privilege
+- Run services behind a reverse proxy (Caddy/Nginx) with TLS.
+- Keep Tailscale/WireGuard as the preferred exposure model.
+- Rotate secrets and API keys regularly.
+- Bind services to localhost unless a reverse proxy handles TLS.

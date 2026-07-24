@@ -5,3 +5,6 @@ __pycache__/
 .env
 .venv/
 node_modules/
+
+# OneByJorah portfolio tooling
+.venv-screenshot/
